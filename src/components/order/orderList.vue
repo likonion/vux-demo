@@ -40,7 +40,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(order,index) in orders" @click="showActionSheet(index,order)" :class="{active:trHover === index}">
+        <tr v-for="(order,index) in orders" @click="showActionSheet(index,order)" :class="{active:clickOrderIndex === index}">
           <td>{{order.number}} </td>
           <td>
             <badge v-if="order.state == '未处理'" :text="order.state"></badge>
@@ -66,6 +66,7 @@
 </template>
 <script>
   import { Badge, XTable, LoadMore, Popup, Group, Cell, XButton, TransferDom, XSwitch } from 'vux'
+  import { mapState } from 'vuex'
   export default {
     data () {
       return {
@@ -79,25 +80,20 @@
     created () {
     },
     computed: {
-      orders () {
-        return this.$store.state.orders
-      },
-      trHover () {
-        return this.$store.state.trHover
-      }
-    },
-    mounted () {
-//      let template = `
-//        <datepicker value="2017-11-11" label="生日" date-format="yyyy-mm-dd"></datepicker>
-//      `
-      this.$nextTick(function () {
+      ...mapState({
+        orders: 'orders',
+        clickOrderIndex: 'clickOrderIndex',
+        pageScrollTop: 'pageScrollTop'
       })
+    },
+    activated () {
+      document.querySelector('#vux_view_box_body').scrollTop = this.pageScrollTop
     },
     methods: {
       // 操作列表
       showActionSheet (index, order) {
         this.$store.commit('changeOrderMenu')
-        this.$store.commit('changeTrHover', {index})
+        this.$store.commit('changeClickOrderIndex', {index})
       },
       // 侧边搜索栏
       toggleSidebar () {

@@ -2,16 +2,16 @@
   <div>
     <div class="page-content">
       <div class="navbarwarpper">
-        <group v-if="orders">
-          <cell title="工单号" :value="orders.number"></cell>
-          <cell title="处理人" :value="orders.receiver"></cell>
+        <group v-if="currentOrder">
+          <cell title="工单号" :value="currentOrder.number"></cell>
+          <cell title="处理人" :value="currentOrder.receiver"></cell>
           <x-textarea title="处理结果" placeholder="请输入" :max="200" v-model="content" autosize></x-textarea>
-          <x-textarea title="备注" :max="200" placeholder="请输入"  v-model="note" autosize></x-textarea>
+          <x-textarea title="备注" :max="200" placeholder="请输入" v-model="note" autosize></x-textarea>
           <selector title="操作" :options="manage" v-model="selManage"></selector>
           <selector title="处理状态" :options="orderState" v-model="selOrderState"></selector>
         </group>
-        <box  gap="10px 10px">
-          <x-button type="primary"  @click.native="submitData(orders)">确定</x-button>
+        <box gap="10px 10px">
+          <x-button type="primary" @click.native="submitData(currentOrder)">确定</x-button>
           <x-button @click.native="$router.go(-1)">返回</x-button>
         </box>
       </div>
@@ -47,7 +47,8 @@
   }
 </style>
 <script>
-  import { Group, Cell, XTextarea, Selector, XButton, Box } from 'vux'
+  import { Group, Cell, XTextarea, Selector, XButton, Box, dateFormat } from 'vux'
+  import { mapState, mapGetters } from 'vuex'
   export default{
     data () {
       return {
@@ -63,18 +64,13 @@
       Group, Cell, XTextarea, Selector, XButton, Box
     },
     created () {
-
+      this.selOrderState = this.currentOrder.state
     },
     computed: {
-      orders () {
-        if (this.$store.state.orders) {
-          let orders = this.$store.state.orders.filter(order => {
-            return order.id == this.$route.params.id
-          })[0]
-          this.selOrderState = orders.state
-          return orders
-        }
-      }
+      ...mapState({}),
+      ...mapGetters({
+        currentOrder: 'currentOrder'
+      })
     },
     mounted () {
     },
@@ -82,30 +78,10 @@
     },
     methods: {
       submitData (orders) {
-        // 获取当前时间，格式YYYY-MM-DD
-        function getNowFormatDate () {
-          var date = new Date()
-          var seperator1 = '-'
-          var seperator2 = ':'
-          var year = date.getFullYear()
-          var month = date.getMonth() + 1
-          var strDate = date.getDate()
-          if (month >= 1 && month <= 9) {
-            month = '0' + month
-          }
-          if (strDate >= 0 && strDate <= 9) {
-            strDate = '0' + strDate
-          }
-          var currentdate = year + seperator1 + month + seperator1 + strDate
-            + ' ' + date.getHours() + seperator2 + date.getMinutes()
-            + seperator2 + date.getSeconds()
-          return currentdate
-        }
-
         let manage = {
           type: this.selManage,
-          date: getNowFormatDate(),
-          operator: this.orders.receiver,
+          date: dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+          operator: this.currentOrder.receiver,
           note: this.note,
           content: this.content
         }
@@ -116,7 +92,7 @@
             type: 'success',
             text: '提交成功！'
           })
-          this.$store.commit('updateData', {orders, manage, orderState})
+          this.$store.commit('updateData', {manage: manage, orderState: orderState})
           this.$router.go(-1)
         } else {
           this.$vux.toast.show({

@@ -18,7 +18,6 @@ router.beforeEach(function (to, from, next) {
   let toPath = to.path
   let fromPath = from.path
   store.commit('updateLoadingStatus', {isLoading: true})
-  console.log()
   next()
 })
 router.afterEach(function (to) {

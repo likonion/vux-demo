@@ -15,7 +15,7 @@ const myPlugin = store => {
 const state = {
   inLogin: false,
   orders: '',
-  trHover: '',
+  clickOrderIndex: '',
   isLoading: false,
   orderMenu: false,
   pageScrollTop: 0
@@ -24,7 +24,9 @@ const state = {
 const getters = {
   waitOrders: state => {
     if (state.orders) {
-      return state.orders.filter(order => order.state === '未处理')
+      return state.orders.filter((order, index, arr) => {
+        return order.state === '未处理'
+      })
     }
   },
   dealOrders: state => {
@@ -36,6 +38,9 @@ const getters = {
     if (getters.waitOrders) {
       return getters.waitOrders.length
     }
+  },
+  currentOrder: state => {
+    return state.orders[state.clickOrderIndex]
   }
 }
 

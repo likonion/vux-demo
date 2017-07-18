@@ -6,13 +6,13 @@ export default {
   getSuccess (state, {resolve}) {
     state.orders = resolve.data.orders
   },
-  updateData (state, {orders, manage, orderState}) {
-    orders.manage.push(manage)
-    orders.state = orderState
+  updateData (state, payload) {
+    state.orders[state.clickOrderIndex].manage.push(payload.manage)
+    state.orders[state.clickOrderIndex].state = payload.orderState
   },
   // 改变当前选中行
-  changeTrHover (state, {index}) {
-    state.trHover = index
+  changeClickOrderIndex (state, {index}) {
+    state.clickOrderIndex = index
   },
   updateLoadingStatus (state, payload) {
     state.isLoading = payload.isLoading

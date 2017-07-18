@@ -63,7 +63,9 @@
             <x-icon type="ios-search-strong" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
           </span>
         </x-header>
-        <router-view class="router-view"></router-view>
+        <keep-alive>
+          <router-view class="router-view"></router-view>
+        </keep-alive>
         <tabbar class="vux-demo-tabbar" slot="bottom">
           <tabbar-item :selected="$route.path == '/home'" link="/home" on-item-click="clickTab">
             <x-icon slot="icon" type="ios-home-outline" size="30"></x-icon>
@@ -96,7 +98,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
+  import { mapState, mapGetters, mapMutations } from 'vuex'
   import {
     XHeader, Tabbar, TabbarItem, Card, TransferDom, Group, Cell, XButton, Drawer, ViewBox, Radio, Loading, Calendar,
     Selector, PopupPicker, Picker, XInput, Flexbox, FlexboxItem, Popup
@@ -128,12 +130,27 @@
     directives: {
       TransferDom
     },
+    watch: {
+    },
     mounted () {
+      // 添加滚动监听事件
+      this.$nextTick(function () {
+        if (this.$route.path == '/orderList' || this.$route.path == '/waitOrderList') {
+          setTimeout(() => {
+            this.box = document.querySelector('#vux_view_box_body')
+            if (this.box) {
+              this.box.removeEventListener('scroll', this.handler, false)
+              this.box.addEventListener('scroll', this.handler, false)
+            }
+          }, 1000)
+        }
+      })
+      // 滚动事件
       this.handler = () => {
-        if (this.$route.path === '/orderList') {
-          this.box = document.querySelector('#demo_list_box')
-          console.log('in')
-          this.updatePagePosition(this.box.scrollTop)
+        if (this.$route.path === '/orderList' || this.$route.path == '/waitOrderList') {
+          this.box = document.querySelector('#vux_view_box_body')
+          let scrollTop = this.box.scrollTop
+          this.$store.commit('updatePagePosition', {top: scrollTop})
         }
       }
     },
@@ -150,41 +167,35 @@
         keyword: '',
         selectState: ['请选择'],
         orderState: [['未处理', '处理中', '已处理']],
-        show7: true
+        show7: true,
+        path: this.$route.path
       }
     },
     computed: {
       ...mapState({
-        orders: state => state.orders,
-        trHover: state => state.trHover
+        orders: 'orders',
+        clickOrderIndex: 'clickOrderIndex'
       }),
       ...mapGetters({
         waitOrders: 'waitOrders',
-        waitOrdersNum: 'waitOrdersNum'
+        waitOrdersNum: 'waitOrdersNum',
+        currentOrder: 'currentOrder'
       }),
       headTitle () {
         if (this.$route.params.id) {
-          return this.$route.params.id
+          return this.currentOrder.number
         } else {
           return this.$route.name
         }
       },
       viewOrderUrl () {
-        if (this.trHover !== '') {
-          if (this.$route.path == '/orderList') {
-            return '/orderview/' + this.orders[this.trHover].id
-          } else {
-            return '/orderview/' + this.waitOrders[this.trHover].id
-          }
+        if (this.clickOrderIndex !== '') {
+          return '/orderview/' + this.currentOrder.id
         }
       },
       ManOrderUrl () {
-        if (this.trHover !== '') {
-          if (this.$route.path == '/orderList') {
-            return '/orderManage/' + this.orders[this.trHover].id
-          } else {
-            return '/orderManage/' + this.waitOrders[this.trHover].id
-          }
+        if (this.clickOrderIndex !== '') {
+          return '/orderManage/' + this.currentOrder.id
         }
       },
       leftOptions () {

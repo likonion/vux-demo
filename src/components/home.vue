@@ -1,6 +1,13 @@
 <template>
   <div>
-
+    <swiper auto height="30px" direction="vertical" :interval=2000 class="text-scroll" :show-dots="false">
+      <swiper-item><p>义务爱了 完成传奇世界H5-王者归来任务 获得20金币</p></swiper-item>
+      <swiper-item><p>基本世神 兑换《传奇世界H5》畅玩级礼包 消耗30金币</p></swiper-item>
+      <swiper-item><p>零哥章魚 完成传奇世界H5-王者归来任务 获得30金币</p></swiper-item>
+      <swiper-item><p>做迎而為 兑换【饿了么】畅享美食红包 消耗20金币</p></swiper-item>
+      <swiper-item><p>只知道不知道 兑换【饿了么】畅享美食红包 消耗20金币</p></swiper-item>
+      <swiper-item><p>基本世神 兑换《传奇世界H5》畅玩级礼包 消耗30金币</p></swiper-item>
+    </swiper>
     <swiper :list="demo01_list" v-model="demo01_index"></swiper>
     <card :header="{title:'我的订单'}" v-if="viewHome">
       <div slot="content" class="card-demo-flex card-demo-content01">
@@ -26,57 +33,67 @@
         </div>
       </div>
     </card>
+    <panel header="图文组合列表" :footer="footer" :list="list" :type="type"></panel>
   </div>
 </template>
 
 <script>
-  import { XHeader, Tabbar, TabbarItem, Card, Swiper } from 'vux'
+  import { XHeader, Tabbar, TabbarItem, Card, Swiper, GroupTitle, SwiperItem, Panel } from 'vux'
   import { mapState, mapGetters } from 'vuex'
+  import img1 from '../assets/img/1.jpg'
+  import img2 from '../assets/img/2.jpg'
+  import img3 from '../assets/img/3.jpg'
+  import ffffff from '../assets/img/ffffff.jpg'
   const baseList = [{
     url: 'javascript:',
-    img: 'https://static.vux.li/demo/1.jpg',
+    img: img1,
     title: '送你一朵fua'
   }, {
     url: 'javascript:',
-    img: 'https://static.vux.li/demo/2.jpg',
+    img: img2,
     title: '送你一辆车'
   }, {
     url: 'javascript:',
-    img: 'https://static.vux.li/demo/3.jpg',
+    img: img3,
     title: '送你一次旅行'
   }]
 
-  const imgList = [
-    'http://placeholder.qiniudn.com/800x300/FF3B3B/ffffff',
-    'http://placeholder.qiniudn.com/800x300/FFEF7D/ffffff',
-    'http://placeholder.qiniudn.com/800x300/8AEEB1/ffffff'
-  ]
-
-  const urlList = baseList.map((item, index) => ({
-    url: 'http://m.baidu.com',
-    img: item.img,
-    title: `(可点击)${item.title}`
-  }))
-
-  const demoList = imgList.map((one, index) => ({
-    url: 'javascript:',
-    img: one
-  }))
-
-  const only2ClickList = baseList.slice(0, 2).map(item => {
-    item.url = 'http://m.baidu.com'
-    return item
-  })
   export default {
     components: {
-      XHeader, Tabbar, TabbarItem, Card, Swiper
+      XHeader, Tabbar, TabbarItem, Card, Swiper, GroupTitle, SwiperItem, Panel
+    },
+    created () {
     },
     data () {
       return {
         tabIndex: 1,
         viewHome: true,
         demo01_list: baseList,
-        demo01_index: 0
+        demo01_index: 0,
+        type: '1',
+        list: [{
+          src: ffffff,
+          title: '标题一',
+          desc: '由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。',
+          url: '/component/cell'
+        }, {
+          src: ffffff,
+          title: '标题二',
+          desc: '由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。',
+          url: {
+            path: '/component/radio',
+            replace: false
+          },
+          meta: {
+            source: '来源信息',
+            date: '时间',
+            other: '其他信息'
+          }
+        }],
+        footer: {
+          title: '查看更多',
+          url: '/about'
+        }
       }
     },
     computed: {
@@ -119,5 +136,15 @@
 
   .card-demo-flex span {
     color: #f74c31;
+  }
+  .text-scroll {
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+  }
+  .text-scroll p{
+    font-size: 12px;
+    text-align: center;
+    line-height: 30px;
   }
 </style>

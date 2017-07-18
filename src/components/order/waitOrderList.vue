@@ -41,8 +41,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(order,index) in waitOrders" @click="showActionSheet(index,order)"
-            :class="{active:trHover === index}">
+        <tr v-for="(order,index) in orders" v-if="order.state == '未处理'" @click="showActionSheet(index,order)"
+            :class="{active:clickOrderIndex === index}">
           <td>{{order.number}}</td>
           <td>
             <badge :text="order.state"></badge>
@@ -70,7 +70,6 @@
     name: 'content',
     data () {
       return {
-        trHover: ''
       }
     },
     components: {
@@ -78,12 +77,17 @@
     },
     computed: {
       ...mapState({
-//        orders: state => state.orders.filter(list => list.state === '未处理')
+        orders: 'orders',
+        clickOrderIndex: 'clickOrderIndex',
+        pageScrollTop: 'pageScrollTop'
       }),
       ...mapGetters({
         waitOrders: 'waitOrders',
         waitOrdersNum: 'waitOrdersNum'
       })
+    },
+    activated () {
+      document.querySelector('#vux_view_box_body').scrollTop = this.pageScrollTop
     },
     mounted () {
       this.$nextTick(function () {
@@ -93,7 +97,7 @@
       // 操作列表
       showActionSheet (index, order) {
         this.$store.commit('changeOrderMenu')
-        this.$store.commit('changeTrHover', {index})
+        this.$store.commit('changeClickOrderIndex', {index})
       },
       // 侧边搜索栏
       toggleSidebar () {
