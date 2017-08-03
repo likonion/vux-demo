@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <x-table full-bordered class="m-tablebox" width="100%" id="table" >
+      <x-table full-bordered class="m-tablebox" width="100%" id="table">
         <thead>
         <tr>
           <th>
@@ -40,7 +40,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(order,index) in orders" @click="showActionSheet(index,order)" :class="{active:clickOrderIndex === index}">
+        <tr v-for="(order,index) in orders" @click="showActionSheet(index,order)"
+            :class="{active:clickOrderIndex === index}">
           <td>{{order.number}} </td>
           <td>
             <badge v-if="order.state == '未处理'" :text="order.state"></badge>
@@ -79,6 +80,10 @@
     },
     created () {
     },
+    mounted () {
+      this.$nextTick(function () {
+      })
+    },
     computed: {
       ...mapState({
         orders: 'orders',
@@ -105,8 +110,6 @@
 </script>
 
 <style lang="less">
-
-
 
 
 </style>
