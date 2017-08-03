@@ -18,6 +18,6 @@ npm run build
 npm run build --report
 ```
 ## 界面
-![Alt text](./static/default.png)
+![Alt text](./static/QQ20170803-164135.png)
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
