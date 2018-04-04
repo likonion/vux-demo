@@ -17,6 +17,9 @@
         </div>
       </popup>
     </div>
+    <div v-transfer-dom>
+      <actionsheet :menus="menus" v-model="showMenus" show-cancel></actionsheet>
+    </div>
     <drawer
       width="200px;"
       :show.sync="drawerVisibility"
@@ -39,9 +42,6 @@
             <flexbox-item>
               <x-button type="default" >重置</x-button>
             </flexbox-item>
-            <flexbox-item>
-              <x-button ref="copy" class="copy" type="default" :data-clipboard-text="copyText" @click.native="copyToClipboard">📋</x-button>
-            </flexbox-item>
           </flexbox>
         </div>
 
@@ -56,15 +56,11 @@
                   :title="headTitle"
                   @on-click-more="onClickMore">
           <span
-            v-if="$route.path === '/' || $route.path === '/home' || $route.path === '/orderList' || $route.path === '/about'"
+            v-if="$route.path === '/' || $route.path === '/home' || $route.path === '/orderList' || $route.path === '/about' || $route.path === '/waitOrderList'"
             slot="overwrite-left" @click="drawerVisibility = !drawerVisibility">
-            <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
+            <x-icon type="ios-search" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
           </span>
-          <span
-            v-if="$route.path === '/' || $route.path === '/home' || $route.path === '/orderList' || $route.path === '/about'"
-            slot="right" @click="drawerVisibility = !drawerVisibility">
-            <x-icon type="ios-search-strong" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
-          </span>
+          
         </x-header>
         <keep-alive>
           <router-view class="router-view"></router-view>
@@ -101,7 +97,6 @@
 </template>
 
 <script>
-import Clipboard from "clipboard";
 import { mapState, mapGetters, mapMutations } from "vuex";
 import {
   XHeader,
@@ -123,7 +118,8 @@ import {
   XInput,
   Flexbox,
   FlexboxItem,
-  Popup
+  Popup,
+  Actionsheet
 } from "vux";
 
 export default {
@@ -147,7 +143,8 @@ export default {
     XInput,
     Flexbox,
     FlexboxItem,
-    Popup
+    Popup,
+    Actionsheet
   },
   directives: {
     TransferDom
@@ -180,7 +177,6 @@ export default {
         this.$store.commit("updatePagePosition", { top: scrollTop });
       }
     };
-    this.copyBtn = new Clipboard(".copy");
   },
   data() {
     return {
@@ -189,7 +185,7 @@ export default {
       showMode: "overlay",
       showModeValue: "overlay",
       showPlacement: "right",
-      showPlacementValue: "right",
+      showPlacementValue: "left",
       starDate: "2017-07-13",
       endDate: "2017-07-13",
       keyword: "",
@@ -197,8 +193,11 @@ export default {
       orderState: [["未处理", "处理中", "已处理"]],
       show7: true,
       path: this.$route.path,
-      copyText: "我是可以复制的内容，啦啦啦啦",
-      copyBtn: null //存储初始化复制按钮事件
+      showMenus: false,
+      menus: {
+        menu1: '分享给朋友',
+        menu2: '分享到朋友圈'
+      }
     };
   },
   computed: {
@@ -235,7 +234,7 @@ export default {
     },
     rightOptions() {
       return {
-        showMore: false
+        showMore: true
       };
     }
   },
@@ -246,8 +245,9 @@ export default {
     clickTab() {
       console.log("in");
     },
+    // 点击XHeader右侧更多时触发
     onClickMore() {
-      this.showMenu = true;
+      this.showMenus = true;
     },
     onShowModeChange(val) {
       /** hide drawer before changing showMode **/
@@ -262,22 +262,6 @@ export default {
       setTimeout(one => {
         this.showPlacementValue = val;
       }, 400);
-    },
-    // 复制内容到剪贴板
-    copyToClipboard() {
-      let _this = this;
-      let clipboard =
-        _this.copyBtn == null ? new Clipboard(".copy") : _this.copyBtn;
-      clipboard.on("success", function() {
-        console.log("复制成功！");
-        _this.copyBtn = null;
-        clipboard.destroy();
-      });
-      clipboard.on("error", function() {
-        console.log("复制失败，请手动选择复制！");
-        _this.copyBtn = null;
-        clipboard.destroy();
-      });
     }
   }
 };

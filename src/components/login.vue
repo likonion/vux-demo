@@ -11,11 +11,6 @@
         <flexbox-item>
           <x-button type="primary" @click.native="login">登录</x-button>
           <a href="javascript:;" @click="inTo" style="font-size:.5rem;float:right;margin-top:.7rem;color:#999;">直接进入>></a>
-          <x-button type="default" :mini="true" @click.native="login"></x-button>
-          <toast v-model="showPositionValue" type="warn" :time="800" is-show-mask :text="toastTxt" ></toast>
-          <div v-transfer-dom>
-            <loading v-model="show1" :text="text1"></loading>
-          </div>
         </flexbox-item>
       </flexbox>
     </box>
