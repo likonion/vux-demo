@@ -15,8 +15,8 @@ import router from './router/router'
 
 router.beforeEach(function (to, from, next) {
   // 页面切换显示loading
-  let toPath = to.path
-  let fromPath = from.path
+  // let toPath = to.path
+  // let fromPath = from.path
   store.commit('updateLoadingStatus', {isLoading: true})
   next()
 })
