@@ -39,6 +39,9 @@
             <flexbox-item>
               <x-button type="default" @click.native="">重置</x-button>
             </flexbox-item>
+            <flexbox-item>
+              <x-button ref="copy" class="copy" type="default" :data-clipboard-text="copyText" @click.native="copyToClipboard">📋</x-button>
+            </flexbox-item>
           </flexbox>
         </div>
 
@@ -98,6 +101,7 @@
 </template>
 
 <script>
+  import Clipboard from 'clipboard';  
   import { mapState, mapGetters, mapMutations } from 'vuex'
   import {
     XHeader, Tabbar, TabbarItem, Card, TransferDom, Group, Cell, XButton, Drawer, ViewBox, Radio, Loading, Calendar,
@@ -153,6 +157,7 @@
           this.$store.commit('updatePagePosition', {top: scrollTop})
         }
       }
+        this.copyBtn = new Clipboard(".copy");
     },
     data () {
       return {
@@ -168,7 +173,9 @@
         selectState: ['请选择'],
         orderState: [['未处理', '处理中', '已处理']],
         show7: true,
-        path: this.$route.path
+        path: this.$route.path,
+        copyText: "我是可以复制的内容，啦啦啦啦",
+        copyBtn: null //存储初始化复制按钮事件
       }
     },
     computed: {
@@ -232,6 +239,21 @@
         setTimeout(one => {
           this.showPlacementValue = val
         }, 400)
+      },
+      // 复制内容到剪贴板
+      copyToClipboard () {
+        let _this = this;
+        let clipboard = _this.copyBtn == null ? new Clipboard(".copy") : _this.copyBtn
+        clipboard.on('success', function() {
+            console.log("复制成功！")
+            _this.copyBtn = null
+            clipboard.destroy();
+        });
+        clipboard.on('error', function() {
+            console.log("复制失败，请手动选择复制！")
+            _this.copyBtn = null
+            clipboard.destroy();
+        });
       }
     }
   }
