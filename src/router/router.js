@@ -63,6 +63,13 @@ export default new Router({
           component: function (resolve) {
             require(['@/components/about'], resolve)
           }
+        },
+        {
+          path: '/msg',
+          name: 'msg',
+          component: function (resolve) {
+            require(['@/components/Msg'], resolve)
+          }
         }
       ]
     }

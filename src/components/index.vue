@@ -31,13 +31,14 @@
         <group title="订单搜索" style="margin-top:20px;">
           <calendar v-model="starDate" title="开始时间"></calendar>
           <calendar v-model="endDate" title="结束时间" disable-future></calendar>
+          <x-address title="选择地址" @on-hide="logHide" v-model="value_0_1" :list="addressData" placeholder="请选择地址"></x-address>
           <popup-picker title="处理状态" :data="orderState" v-model="selectState" placeholder="请选择"></popup-picker>
           <x-input title="关键字" placeholder="请输入" v-model="keyword" is-type="text"></x-input>
         </group>
         <div style="padding:10px; background: none">
           <flexbox>
             <flexbox-item>
-              <x-button type="primary" >搜索</x-button>
+              <x-button type="primary" @click.native="search">搜索</x-button>
             </flexbox-item>
             <flexbox-item>
               <x-button type="default" >重置</x-button>
@@ -119,7 +120,9 @@ import {
   Flexbox,
   FlexboxItem,
   Popup,
-  Actionsheet
+  Actionsheet,
+  ChinaAddressV4Data,
+  XAddress
 } from "vux";
 
 export default {
@@ -144,7 +147,8 @@ export default {
     Flexbox,
     FlexboxItem,
     Popup,
-    Actionsheet
+    Actionsheet,
+    XAddress
   },
   directives: {
     TransferDom
@@ -195,9 +199,11 @@ export default {
       path: this.$route.path,
       showMenus: false,
       menus: {
-        menu1: '分享给朋友',
-        menu2: '分享到朋友圈'
-      }
+        menu1: "分享给朋友",
+        menu2: "分享到朋友圈"
+      },
+      value_0_1: [],
+      addressData: ChinaAddressV4Data
     };
   },
   computed: {
@@ -242,6 +248,9 @@ export default {
     this.$store.dispatch("getData");
   },
   methods: {
+    logHide(str) {
+      console.log("on-hide", str);
+    },
     clickTab() {
       console.log("in");
     },
@@ -262,6 +271,16 @@ export default {
       setTimeout(one => {
         this.showPlacementValue = val;
       }, 400);
+    },
+    search() {
+      this.$vux.alert.show({
+        title: "Vux is Cool",
+        content: "仅供测试！",
+        onShow() {
+        },
+        onHide() {
+        }
+      });
     }
   }
 };
@@ -323,7 +342,8 @@ body {
         }
       }
       td {
-        padding: 0.5rem;
+        padding: 0.1rem;
+        line-height: 1.5rem;
         color: #666;
         &:first-child {
           color: blue;

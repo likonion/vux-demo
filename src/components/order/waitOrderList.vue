@@ -41,8 +41,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(order,index) in orders" v-if="order.state == '未处理'" @click="showActionSheet(index,order)"
-            :class="{active:clickOrderIndex === index}">
+        <tr v-for="(order,index) in orders" :key="order"  v-if="order.state == '未处理'" @click="showActionSheet(index,order)" :class="{active:clickOrderIndex === index}" >
           <td>{{order.number}}</td>
           <td>
             <badge :text="order.state"></badge>
